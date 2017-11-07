@@ -4,6 +4,8 @@ import com.vk.api.sdk.client.VkApiClient
 import com.vk.api.sdk.client.actors.UserActor
 import com.vk.api.sdk.objects.messages.Message
 
+import scala.collection.JavaConverters._
+
 class MessageProvider(
                        private val actor: UserActor,
                        private val vkApiClient: VkApiClient,
@@ -13,9 +15,10 @@ class MessageProvider(
     val query = getQuery
     lastMessageId
       .map(id => query.startMessageId(id))
-      .getOrElse(_ => query.count(20))
+      .getOrElse(query.count(20))
       .execute()
       .getItems
+      .asScala.toList
   }
 
   private def getQuery = {
