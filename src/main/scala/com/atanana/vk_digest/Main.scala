@@ -1,3 +1,5 @@
+package com.atanana.vk_digest
+
 import com.vk.api.sdk.client.VkApiClient
 import com.vk.api.sdk.client.actors.UserActor
 import com.vk.api.sdk.httpclient.HttpTransportClient
