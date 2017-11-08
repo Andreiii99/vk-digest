@@ -8,6 +8,7 @@
     "server": "test server",
     "port": 456,
     "address": "test@test.com",
-    "password": "test password"
+    "password": "test password",
+    "addressTo": "test_to@test.com"
   }
 }
