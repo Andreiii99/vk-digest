@@ -1,0 +1,13 @@
+{
+  "vkConfig": {
+    "userId": 123,
+    "token": "test token",
+    "chatId": 321
+  },
+  "mailConfig": {
+    "server": "test server",
+    "port": 456,
+    "address": "test@test.com",
+    "password": "test password"
+  }
+}

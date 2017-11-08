@@ -1,13 +1,31 @@
 package com.atanana.vk_digest
 
-class ConfigProvider {
-  def config(): Config = {
-    Config(
-      sys.env("userId").toInt,
-      sys.env("token"),
-      sys.env("chatId").toInt
-    )
+import spray.json.DefaultJsonProtocol._
+import spray.json._
+
+import scala.util.Try
+
+class ConfigProvider(private val fsWrapper: FsWrapper) {
+  import ConfigProvider.FILE_NAME
+
+  private implicit val vkConfigFormat: RootJsonFormat[VkConfig] = jsonFormat3(VkConfig)
+  private implicit val mailConfigFormat: RootJsonFormat[MailConfig] = jsonFormat4(MailConfig)
+  private implicit val configFormat: RootJsonFormat[Config] = jsonFormat2(Config)
+
+  def config(): Try[Config] = {
+    fsWrapper.readFile(FILE_NAME)
+      .flatMap(contents => Try {
+        contents.parseJson.convertTo[Config]
+      })
   }
 }
 
-case class Config(userId: Int, token: String, chatId: Int)
+object ConfigProvider {
+  val FILE_NAME = "config.json"
+}
+
+case class VkConfig(userId: Int, token: String, chatId: Int)
+
+case class MailConfig(server: String, port: Int, address: String, password: String)
+
+case class Config(vkConfig: VkConfig, mailConfig: MailConfig)

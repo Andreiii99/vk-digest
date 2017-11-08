@@ -9,7 +9,7 @@ import scala.collection.JavaConverters._
 class MessageProvider(
                        private val actor: UserActor,
                        private val vkApiClient: VkApiClient,
-                       private val config: Config
+                       private val config: VkConfig
                      ) {
   def messages(lastMessageId: Option[Int]): List[Message] = {
     val query = getQuery
