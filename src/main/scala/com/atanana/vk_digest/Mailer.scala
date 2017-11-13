@@ -1,11 +1,13 @@
 package com.atanana.vk_digest
 
+import javax.inject.Inject
+
 import courier.Defaults._
 import courier._
 
 import scala.concurrent.Future
 
-class Mailer(private val config: MailConfig) {
+class Mailer @Inject()(private val config: MailConfig) {
   def send(subject: String, html: String): Future[Unit] = {
     val mailer = Mailer(config.server, config.port)
       .auth(true)

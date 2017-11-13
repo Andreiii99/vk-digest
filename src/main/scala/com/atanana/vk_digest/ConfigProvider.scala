@@ -1,11 +1,13 @@
 package com.atanana.vk_digest
 
+import javax.inject.Inject
+
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import scala.util.Try
 
-class ConfigProvider(private val fsWrapper: FsWrapper) {
+class ConfigProvider @Inject()(private val fsWrapper: FsWrapper) {
 
   import ConfigProvider.FILE_NAME
 
