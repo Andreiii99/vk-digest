@@ -13,3 +13,5 @@ libraryDependencies += "net.codingwell" %% "scala-guice" % "4.1.0"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
 libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test
+
+lazy val root = (project in file(".")).enablePlugins(SbtTwirl)
