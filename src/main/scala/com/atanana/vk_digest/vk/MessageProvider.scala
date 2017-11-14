@@ -15,19 +15,23 @@ class MessageProvider @Inject()(
                                  private val config: VkConfig
                                ) {
   def messages(lastMessageId: Option[Int]): List[Message] = {
-    val query = getQuery
-    lastMessageId
-      .map(id => query.startMessageId(id))
-      .getOrElse(query.count(50))
+    vkApiClient.messages()
+      .getHistory(actor)
+      .peerId(config.chatId)
+      .userId(config.userId)
+      .startMessageId(startMessageId(lastMessageId))
+      .offset(offset(lastMessageId))
+      .count(50)
       .execute()
       .getItems
       .asScala.toList
   }
 
-  private def getQuery = {
-    vkApiClient.messages()
-      .getHistory(actor)
-      .peerId(config.chatId)
-      .userId(config.userId)
+  private def offset(lastMessageId: Option[Int]): Int = {
+    lastMessageId.map(_ => -50).getOrElse(0)
+  }
+
+  private def startMessageId(lastMessageId: Option[Int]): Int = {
+    lastMessageId.getOrElse(-1)
   }
 }

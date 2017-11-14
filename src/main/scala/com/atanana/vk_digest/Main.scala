@@ -1,6 +1,6 @@
 package com.atanana.vk_digest
 
-import com.atanana.vk_digest.modules.{ConfigModule, DigestModule, VkModule}
+import com.atanana.vk_digest.modules.{ConfigModule, DataModule, DigestModule, VkModule}
 import com.google.inject.{Guice, Injector}
 import net.codingwell.scalaguice.InjectorExtensions._
 
@@ -13,8 +13,10 @@ object Main {
       case Success(config) =>
         val injector = rootInjector.createChildInjector(
           new ConfigModule(config),
-          new VkModule(config.vkConfig)
+          new VkModule(config.vkConfig),
+          new DataModule(rootInjector.instance[JsonStore])
         )
+        print(injector.instance[UiComposer].getMessagesHtml.toString())
       case Failure(e) => println(e.getMessage)
     }
   }

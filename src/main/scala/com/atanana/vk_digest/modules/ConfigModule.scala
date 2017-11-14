@@ -12,5 +12,6 @@ class ConfigModule(config: Config) extends AbstractModule with ScalaModule {
 
     bind[Mailer]
     bind[MessageProvider]
+    bind[UiComposer]
   }
 }

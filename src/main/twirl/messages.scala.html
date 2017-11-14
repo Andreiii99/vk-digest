@@ -1,0 +1,7 @@
+@import com.vk.api.sdk.objects.messages.Message
+
+@(messages: List[Message])
+
+@for(message <- messages) {
+    @message.getBody
+}

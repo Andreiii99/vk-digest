@@ -1,11 +1,13 @@
 package com.atanana.vk_digest
 
+import javax.inject.Inject
+
 import spray.json.DefaultJsonProtocol._
 import spray.json._
 
 import scala.util.Try
 
-class JsonStore(fsWrapper: FsWrapper) {
+class JsonStore @Inject()(fsWrapper: FsWrapper) {
 
   import JsonStore.FILE_NAME
 
