@@ -8,7 +8,7 @@ import courier._
 import scala.concurrent.Future
 
 class Mailer @Inject()(private val config: MailConfig) {
-  def send(subject: String, html: String): Future[Unit] = {
+  def send(mailData: MailData): Future[Unit] = {
     val mailer = Mailer(config.server, config.port)
       .auth(true)
       .as(config.address, config.password)
@@ -17,8 +17,8 @@ class Mailer @Inject()(private val config: MailConfig) {
     val future: Future[Unit] = mailer(
       Envelope.from(config.address.addr)
         .to(config.addressTo.addr)
-        .subject(subject)
-        .content(Multipart().html(html))
+        .subject(mailData.subject)
+        .content(Multipart().html(mailData.html.toString()))
     )
     future.failed.foreach(
       e => println(e.getMessage)

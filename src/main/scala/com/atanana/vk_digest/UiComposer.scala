@@ -1,14 +1,20 @@
 package com.atanana.vk_digest
 
-import javax.inject.Inject
-
-import com.atanana.vk_digest.vk.MessageProvider
+import com.vk.api.sdk.objects.messages.Message
 import play.twirl.api.Html
 
-class UiComposer @Inject()(messageProvider: MessageProvider, dataOption: Option[Data]) {
-  def getMessagesHtml: Html = {
-    val messages = messageProvider.messages(dataOption.map(_.lastMessage))
+class UiComposer {
+  def composeMail(messages: List[Message]): MailData = MailData(
+    messagesHtml(messages),
+    subject
+  )
+
+  private def messagesHtml(messages: List[Message]): Html = {
     val messagesHtml = html.messages(messages)
     html.main(messagesHtml)
   }
+
+  private def subject: String = ???
 }
+
+case class MailData(html: Html, subject: String)
