@@ -32,5 +32,5 @@ class MessagesProcessor @Inject()(
     }
   }
 
-  private def lastMessageId(messages: List[Message]): Int = ???
+  private def lastMessageId(messages: List[Message]): Int = messages.head.getId
 }
