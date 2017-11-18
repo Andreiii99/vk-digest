@@ -3,15 +3,17 @@
 
 @(messages: List[Message])
 
-@for(message <- messages) {
-    <div class="message">
-        <div class="message-header">
-            <span class="message-date">
-            @UiUtils.messageDateFormat(message.getDate)
-            </span>
+<div class="messages-container">
+    @for(message <- messages) {
+        <div class="message">
+            <div class="message-header">
+                <span class="message-date">
+                @UiUtils.messageDateFormat(message.getDate)
+                </span>
+            </div>
+            <div class="message-body">
+            @message.getBody
+            </div>
         </div>
-        <div class="message-body">
-        @message.getBody
-        </div>
-    </div>
-}
+    }
+</div>
