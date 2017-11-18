@@ -1,19 +1,24 @@
 @import com.vk.api.sdk.objects.messages.Message
+@import com.vk.api.sdk.objects.users.User
 @import com.atanana.vk_digest.ui.UiUtils
 
-@(messages: List[Message])
+@(messages: List[Message], users: Map[Int, User])
 
 <div class="messages-container">
     @for(message <- messages) {
-        <div class="message">
-            <div class="message-header">
-                <span class="message-date">
-                @UiUtils.messageDateFormat(message.getDate)
-                </span>
+        @defining(users(message.getUserId)) { user: User =>
+            <div class="message">
+                <img src="@user.getPhoto50" alt="@user.getFirstName @user.getLastName" class="user-photo">
+                <div class="message-header">
+                    <span class="message-author">
+                        @user.getFirstName @user.getLastName
+                    </span>
+                    <span class="message-date">
+                    @UiUtils.messageDateFormat(message.getDate)
+                    </span>
+                </div>
+                <div class="message-body">@message.getBody</div>
             </div>
-            <div class="message-body">
-            @message.getBody
-            </div>
-        </div>
+        }
     }
 </div>

@@ -15,7 +15,7 @@ class UiComposer @Inject()(private val config: MailConfig) {
   )
 
   private def messagesHtml(messages: List[Message], users: Map[Int, User]): Html = {
-    val messagesHtml = html.messages(messages)
+    val messagesHtml = html.messages(messages, users)
     html.main(subject, messagesHtml)
   }
 
