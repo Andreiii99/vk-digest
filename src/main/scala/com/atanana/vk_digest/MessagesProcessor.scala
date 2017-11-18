@@ -2,6 +2,7 @@ package com.atanana.vk_digest
 
 import javax.inject.Inject
 
+import com.atanana.vk_digest.mailers.Mailer
 import com.atanana.vk_digest.vk.MessageProvider
 import com.vk.api.sdk.objects.messages.Message
 

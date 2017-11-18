@@ -1,9 +1,10 @@
 package com.atanana.vk_digest
 
+import com.atanana.vk_digest.mailers.Mailer
 import com.atanana.vk_digest.vk.MessageProvider
 import com.vk.api.sdk.objects.messages.Message
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{BeforeAndAfter, FunSuite, Matchers, WordSpecLike}
+import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
 import play.twirl.api.Html
 
 class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFactory with Matchers {
