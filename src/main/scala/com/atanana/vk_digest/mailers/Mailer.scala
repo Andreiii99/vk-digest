@@ -1,6 +1,6 @@
 package com.atanana.vk_digest.mailers
 
-import com.atanana.vk_digest.MailData
+import com.atanana.vk_digest.ui.MailData
 
 import scala.concurrent.Future
 

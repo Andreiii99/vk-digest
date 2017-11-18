@@ -2,7 +2,8 @@ package com.atanana.vk_digest.mailers
 
 import javax.inject.Inject
 
-import com.atanana.vk_digest.{FsWrapper, MailData}
+import com.atanana.vk_digest.FsWrapper
+import com.atanana.vk_digest.ui.MailData
 
 import scala.concurrent.Future
 

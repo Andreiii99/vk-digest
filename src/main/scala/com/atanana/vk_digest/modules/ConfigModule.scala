@@ -2,6 +2,7 @@ package com.atanana.vk_digest.modules
 
 import com.atanana.vk_digest._
 import com.atanana.vk_digest.mailers.{Mailer, TestMailer}
+import com.atanana.vk_digest.ui.UiComposer
 import com.atanana.vk_digest.vk.MessageProvider
 import com.google.inject.AbstractModule
 import net.codingwell.scalaguice.ScalaModule

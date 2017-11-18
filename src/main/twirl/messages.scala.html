@@ -1,7 +1,17 @@
 @import com.vk.api.sdk.objects.messages.Message
+@import com.atanana.vk_digest.ui.UiUtils
 
 @(messages: List[Message])
 
 @for(message <- messages) {
-    @message.getBody
+    <div class="message">
+        <div class="message-header">
+            <span class="message-date">
+            @UiUtils.messageDateFormat(message.getDate)
+            </span>
+        </div>
+        <div class="message-body">
+        @message.getBody
+        </div>
+    </div>
 }

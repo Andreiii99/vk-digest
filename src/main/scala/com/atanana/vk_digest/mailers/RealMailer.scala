@@ -2,7 +2,8 @@ package com.atanana.vk_digest.mailers
 
 import javax.inject.Inject
 
-import com.atanana.vk_digest.{MailConfig, MailData}
+import com.atanana.vk_digest.MailConfig
+import com.atanana.vk_digest.ui.MailData
 import courier.Defaults._
 import courier._
 

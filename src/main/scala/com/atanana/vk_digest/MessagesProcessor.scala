@@ -3,6 +3,7 @@ package com.atanana.vk_digest
 import javax.inject.Inject
 
 import com.atanana.vk_digest.mailers.Mailer
+import com.atanana.vk_digest.ui.UiComposer
 import com.atanana.vk_digest.vk.MessageProvider
 import com.vk.api.sdk.objects.messages.Message
 
@@ -30,7 +31,7 @@ class MessagesProcessor @Inject()(
   }
 
   private def sendMail(messages: List[Message]) = {
-    val mailData = uiComposer.composeMail(messages)
+    val mailData = uiComposer.composeMail(messages.reverse)
     mailer.send(mailData)
   }
 

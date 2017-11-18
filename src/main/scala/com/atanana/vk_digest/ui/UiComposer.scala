@@ -1,16 +1,12 @@
-package com.atanana.vk_digest
+package com.atanana.vk_digest.ui
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import javax.inject.Inject
 
+import com.atanana.vk_digest.MailConfig
 import com.vk.api.sdk.objects.messages.Message
 import play.twirl.api.Html
 
 class UiComposer @Inject()(private val config: MailConfig) {
-
-  import UiComposer.DATE_FORMATTER
 
   def composeMail(messages: List[Message]): MailData = MailData(
     messagesHtml(messages),
@@ -22,11 +18,7 @@ class UiComposer @Inject()(private val config: MailConfig) {
     html.main(subject, messagesHtml)
   }
 
-  private def subject: String = s"${config.subjectPrefix} ${LocalDate.now().format(DATE_FORMATTER)}"
-}
-
-object UiComposer {
-  val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy", new Locale("ru"))
+  private def subject: String = s"${config.subjectPrefix} ${UiUtils.subjectDate}"
 }
 
 case class MailData(html: Html, subject: String)

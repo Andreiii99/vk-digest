@@ -1,6 +1,7 @@
 package com.atanana.vk_digest
 
 import com.atanana.vk_digest.mailers.Mailer
+import com.atanana.vk_digest.ui.{MailData, UiComposer}
 import com.atanana.vk_digest.vk.MessageProvider
 import com.vk.api.sdk.objects.messages.Message
 import org.scalamock.scalatest.MockFactory
