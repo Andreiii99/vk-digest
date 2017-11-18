@@ -6,19 +6,26 @@ import com.atanana.vk_digest.mailers.Mailer
 import com.atanana.vk_digest.vk.MessageProvider
 import com.vk.api.sdk.objects.messages.Message
 
+import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class MessagesProcessor @Inject()(
                                    private val messageProvider: MessageProvider,
                                    private val jsonStore: JsonStore,
                                    private val uiComposer: UiComposer,
                                    private val mailer: Mailer
                                  ) {
-  def process(): Unit = {
+  def process(): Future[Unit] = {
     val lastMessage = jsonStore.read.map(_.lastMessage)
     val messages = messageProvider.messages(lastMessage)
 
     if (messages.nonEmpty) {
-      sendMail(messages)
-      storeLastMessageId(lastMessage, lastMessageId(messages))
+      sendMail(messages).map(_ => {
+        storeLastMessageId(lastMessage, lastMessageId(messages))
+        Future.successful()
+      })
+    } else {
+      Future.successful()
     }
   }
 
