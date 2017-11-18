@@ -21,7 +21,7 @@ class UiComposer {
     html.main(messagesHtml)
   }
 
-  private def subject: String = LocalDate.now().format(DATE_FORMATTER)
+  private def subject: String = s"Дайджест ${LocalDate.now().format(DATE_FORMATTER)}"
 }
 
 object UiComposer {

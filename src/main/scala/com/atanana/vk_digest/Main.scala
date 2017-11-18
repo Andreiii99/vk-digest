@@ -4,6 +4,9 @@ import com.atanana.vk_digest.modules.{ConfigModule, DigestModule, VkModule}
 import com.google.inject.{Guice, Injector}
 import net.codingwell.scalaguice.InjectorExtensions._
 
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import scala.language.postfixOps
 import scala.util.{Failure, Success}
 
 object Main {
@@ -15,6 +18,8 @@ object Main {
           new ConfigModule(config),
           new VkModule(config.vkConfig)
         )
+        val processor = injector.instance[MessagesProcessor]
+        Await.result(processor.process(), 1 minute)
       case Failure(e) => println(e.getMessage)
     }
   }
