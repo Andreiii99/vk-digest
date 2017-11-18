@@ -12,7 +12,7 @@ class ConfigProvider @Inject()(private val fsWrapper: FsWrapper) {
   import ConfigProvider.FILE_NAME
 
   private implicit val vkConfigFormat: RootJsonFormat[VkConfig] = jsonFormat3(VkConfig)
-  private implicit val mailConfigFormat: RootJsonFormat[MailConfig] = jsonFormat5(MailConfig)
+  private implicit val mailConfigFormat: RootJsonFormat[MailConfig] = jsonFormat6(MailConfig)
   private implicit val configFormat: RootJsonFormat[Config] = jsonFormat2(Config)
 
   def config(): Try[Config] = {
@@ -29,6 +29,13 @@ object ConfigProvider {
 
 case class VkConfig(userId: Int, token: String, chatId: Int)
 
-case class MailConfig(server: String, port: Int, address: String, password: String, addressTo: String)
+case class MailConfig(
+                       server: String,
+                       port: Int,
+                       address: String,
+                       password: String,
+                       addressTo: String,
+                       subjectPrefix: String
+                     )
 
 case class Config(vkConfig: VkConfig, mailConfig: MailConfig)

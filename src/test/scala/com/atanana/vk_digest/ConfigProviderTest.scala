@@ -30,13 +30,14 @@ class ConfigProviderTest extends WordSpecLike with BeforeAndAfter with MockFacto
           |    "port": 456,
           |    "address": "test@test.com",
           |    "password": "test password",
-          |    "addressTo": "test_to@test.com"
+          |    "addressTo": "test_to@test.com",
+          |    "subjectPrefix": "Дайджест"
           |  }
           |}""".stripMargin
       ))
       provider.config() shouldEqual Success(Config(
         VkConfig(123, "test token", 321),
-        MailConfig("test server", 456, "test@test.com", "test password", "test_to@test.com")
+        MailConfig("test server", 456, "test@test.com", "test password", "test_to@test.com", "Дайджест")
       ))
     }
 
