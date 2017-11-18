@@ -1,6 +1,7 @@
+@import com.vk.api.sdk.objects.base.Link
 @import com.vk.api.sdk.objects.messages.Message
 @import com.vk.api.sdk.objects.messages.MessageAttachmentType
-@import com.vk.api.sdk.objects.photos.Photo;
+@import com.vk.api.sdk.objects.photos.Photo
 @import com.vk.api.sdk.objects.users.User
 @import com.atanana.vk_digest.ui.UiUtils
 
@@ -26,6 +27,11 @@
                     @if(attachment.getType == MessageAttachmentType.PHOTO) {
                         @defining(attachment.getPhoto) { photo: Photo =>
                             <img src="@photo.getPhoto604" alt="@photo.getText">
+                        }
+                    }
+                    @if(attachment.getType == MessageAttachmentType.LINK) {
+                        @defining(attachment.getLink) { link: Link =>
+                            <a href="@link.getUrl">@link.getTitle</a>
                         }
                     }
                 }
