@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import com.atanana.vk_digest.mailers.Mailer
 import com.atanana.vk_digest.ui.UiComposer
-import com.atanana.vk_digest.vk.MessageProvider
+import com.atanana.vk_digest.vk.{MessageProvider, UsersProvider}
 import com.vk.api.sdk.objects.messages.Message
 
 import scala.concurrent.Future
@@ -14,7 +14,8 @@ class MessagesProcessor @Inject()(
                                    private val messageProvider: MessageProvider,
                                    private val jsonStore: JsonStore,
                                    private val uiComposer: UiComposer,
-                                   private val mailer: Mailer
+                                   private val mailer: Mailer,
+                                   private val usersProvider: UsersProvider
                                  ) {
   def process(): Future[Unit] = {
     val lastMessage = jsonStore.read.map(_.lastMessage)
@@ -31,7 +32,9 @@ class MessagesProcessor @Inject()(
   }
 
   private def sendMail(messages: List[Message]) = {
-    val mailData = uiComposer.composeMail(messages.reverse)
+    val userIds = messages.map(_.getUserId.intValue()).distinct
+    val users = usersProvider.users(userIds)
+    val mailData = uiComposer.composeMail(messages.reverse, users)
     mailer.send(mailData)
   }
 

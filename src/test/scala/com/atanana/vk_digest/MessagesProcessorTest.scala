@@ -2,8 +2,9 @@ package com.atanana.vk_digest
 
 import com.atanana.vk_digest.mailers.Mailer
 import com.atanana.vk_digest.ui.{MailData, UiComposer}
-import com.atanana.vk_digest.vk.MessageProvider
+import com.atanana.vk_digest.vk.{MessageProvider, UsersProvider}
 import com.vk.api.sdk.objects.messages.Message
+import com.vk.api.sdk.objects.users.User
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{BeforeAndAfter, Matchers, WordSpecLike}
 import play.twirl.api.Html
@@ -13,28 +14,30 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 
 class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFactory with Matchers {
-  var providerStub: MessageProvider = _
-  var providerMock: MessageProvider = _
+  var messageProviderStub: MessageProvider = _
+  var messageProviderMock: MessageProvider = _
   var storeMock: JsonStore = _
   var storeStub: JsonStore = _
   var composer: UiComposer = _
   var mailerMock: Mailer = _
   var mailerStub: Mailer = _
+  var usersProvider: UsersProvider = _
   var processor: MessagesProcessor = _
 
   before {
-    providerStub = stub[MessageProvider]
-    providerMock = mock[MessageProvider]
+    messageProviderStub = stub[MessageProvider]
+    messageProviderMock = mock[MessageProvider]
     storeMock = mock[JsonStore]
     storeStub = stub[JsonStore]
     composer = stub[UiComposer]
     mailerMock = mock[Mailer]
     mailerStub = stub[Mailer]
+    usersProvider = stub[UsersProvider]
   }
 
   "MessagesProcessor" should {
     "read last message id from store" in {
-      processor = new MessagesProcessor(providerMock, storeStub, composer, mailerMock)
+      processor = new MessagesProcessor(messageProviderMock, storeStub, composer, mailerMock, usersProvider)
 
       val messageId = 123
       stubStoreData(Some(Data(messageId)))
@@ -44,7 +47,7 @@ class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFa
     }
 
     "read empty last message id from store" in {
-      processor = new MessagesProcessor(providerMock, storeStub, composer, mailerMock)
+      processor = new MessagesProcessor(messageProviderMock, storeStub, composer, mailerMock, usersProvider)
 
       stubStoreData(None)
       checkMessageId(None)
@@ -53,17 +56,18 @@ class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFa
     }
 
     "send mail when messages not empty" in {
-      processor = new MessagesProcessor(providerStub, storeStub, composer, mailerMock)
+      processor = new MessagesProcessor(messageProviderStub, storeStub, composer, mailerMock, usersProvider)
       stubStoreData(None)
-      val messages = List(stub[Message])
+      val messages = List(stubMessage(123))
       val mailData: MailData = stubMessagesMail(messages)
+      stubUsers
       checkMail(mailData)
 
       process
     }
 
     "not send mail when messages are empty" in {
-      processor = new MessagesProcessor(providerStub, storeStub, composer, mailerMock)
+      processor = new MessagesProcessor(messageProviderStub, storeStub, composer, mailerMock, usersProvider)
       stubStoreData(None)
       stubMessagesMail(List.empty)
       (mailerMock.send _).expects(*).never()
@@ -72,7 +76,7 @@ class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFa
     }
 
     "should save new last message id when no previous message id" in {
-      processor = new MessagesProcessor(providerStub, storeMock, composer, mailerStub)
+      processor = new MessagesProcessor(messageProviderStub, storeMock, composer, mailerStub, usersProvider)
       mockStoreData(None)
       val messageId = 123
       stubMessagesMail(List(stubMessage(messageId)))
@@ -83,7 +87,7 @@ class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFa
     }
 
     "should save last message id" in {
-      processor = new MessagesProcessor(providerStub, storeMock, composer, mailerStub)
+      processor = new MessagesProcessor(messageProviderStub, storeMock, composer, mailerStub, usersProvider)
       mockStoreData(None)
       val messageId = 123
       stubMessagesMail(List(stubMessage(messageId), stubMessage(321)))
@@ -94,7 +98,7 @@ class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFa
     }
 
     "should save new last message id when previous message id differs" in {
-      processor = new MessagesProcessor(providerStub, storeMock, composer, mailerStub)
+      processor = new MessagesProcessor(messageProviderStub, storeMock, composer, mailerStub, usersProvider)
       mockStoreData(Some(Data(321)))
       val messageId = 123
       stubMessagesMail(List(stubMessage(messageId)))
@@ -105,7 +109,7 @@ class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFa
     }
 
     "should not save last message id when no messages" in {
-      processor = new MessagesProcessor(providerStub, storeMock, composer, mailerStub)
+      processor = new MessagesProcessor(messageProviderStub, storeMock, composer, mailerStub, usersProvider)
       mockStoreData(Some(Data(321)))
       stubMessagesMail(List.empty)
       (storeMock.write _).expects(*).never()
@@ -114,7 +118,7 @@ class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFa
     }
 
     "should not save new last message id when sending mail failed" in {
-      processor = new MessagesProcessor(providerStub, storeMock, composer, mailerStub)
+      processor = new MessagesProcessor(messageProviderStub, storeMock, composer, mailerStub, usersProvider)
       mockStoreData(None)
       val messageId = 123
       stubMessagesMail(List(stubMessage(messageId)))
@@ -123,6 +127,43 @@ class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFa
 
       process
     }
+
+    "should get users data from users provider" in {
+      processor = new MessagesProcessor(messageProviderStub, storeStub, composer, mailerMock, usersProvider)
+      stubStoreData(None)
+      val messages = List(stubMessage(123, 123), stubMessage(321, 321))
+      val users = Map(
+        1 -> stub[User],
+        2 -> stub[User]
+      )
+      val mailData: MailData = stubMessagesMail(messages, users)
+      stubUsers(List(123, 321), users)
+      checkMail(mailData)
+
+      process
+    }
+
+    "should remove duplicate user ids" in {
+      processor = new MessagesProcessor(messageProviderStub, storeStub, composer, mailerMock, usersProvider)
+      stubStoreData(None)
+      val messages = List(stubMessage(123, 123), stubMessage(123, 123), stubMessage(123, 123))
+      val users = Map(
+        1 -> stub[User]
+      )
+      val mailData: MailData = stubMessagesMail(messages, users)
+      stubUsers(List(123), users)
+      checkMail(mailData)
+
+      process
+    }
+  }
+
+  private def stubUsers(ids: List[Int], users: Map[Int, User]) = {
+    (usersProvider.users _).when(ids).returns(users)
+  }
+
+  private def stubUsers = {
+    (usersProvider.users _).when(*).returns(Map.empty)
   }
 
   private def stubMailSend(result: Future[Unit] = Future.successful()) = {
@@ -133,16 +174,19 @@ class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFa
     (mailerMock.send _).expects(mailData).returns(Future.successful())
   }
 
-  private def stubMessage(messageId: Int) = {
+  private def stubMessage(messageId: Int, userId: Int = 0) = {
     val message = stub[Message]
     (message.getId _).when().returns(messageId)
+    (message.getUserId _).when().returns(userId)
     message
   }
 
-  private def stubMessagesMail(messages: List[Message]) = {
-    (providerStub.messages _).when(*).returns(messages)
+  private def stubMessagesMail(messages: List[Message], users: Map[Int, User] = Map.empty) = {
+    (messageProviderStub.messages _).when(*).returns(messages)
     val mailData = MailData(Html(""), "")
-    (composer.composeMail _).when(messages).returns(mailData)
+    (composer.composeMail _).when(where {
+      (messagesArg, usersArg) => messages.reverse.map(_.getId) == messagesArg.map(_.getId) && users == usersArg
+    }).returns(mailData)
     mailData
   }
 
@@ -155,7 +199,7 @@ class MessagesProcessorTest extends WordSpecLike with BeforeAndAfter with MockFa
   }
 
   private def checkMessageId(message: Option[Int]) = {
-    (providerMock.messages _).expects(message).returns(List.empty)
+    (messageProviderMock.messages _).expects(message).returns(List.empty)
   }
 
   private def process = {

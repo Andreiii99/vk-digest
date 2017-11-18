@@ -4,16 +4,17 @@ import javax.inject.Inject
 
 import com.atanana.vk_digest.MailConfig
 import com.vk.api.sdk.objects.messages.Message
+import com.vk.api.sdk.objects.users.User
 import play.twirl.api.Html
 
 class UiComposer @Inject()(private val config: MailConfig) {
 
-  def composeMail(messages: List[Message]): MailData = MailData(
-    messagesHtml(messages),
+  def composeMail(messages: List[Message], users: Map[Int, User]): MailData = MailData(
+    messagesHtml(messages, users),
     subject
   )
 
-  private def messagesHtml(messages: List[Message]): Html = {
+  private def messagesHtml(messages: List[Message], users: Map[Int, User]): Html = {
     val messagesHtml = html.messages(messages)
     html.main(subject, messagesHtml)
   }
