@@ -5,39 +5,46 @@
 @import com.vk.api.sdk.objects.users.User
 @import com.atanana.vk_digest.ui.UiUtils
 
-@(messages: List[Message], users: Map[Int, User])
+@import scala.collection.JavaConverters._
+
+@(messages: List[Message], users: Map[Int, User], provider: (List[Message]) => Html)
 
 <div class="messages-container">
-@for(message <- messages) {
-    @defining(users(message.getUserId)) { user: User =>
-        <div class="message">
-            <img src="@user.getPhoto50" alt="@user.getFirstName @user.getLastName" class="user-photo">
-            <div class="message-header">
-                <span class="message-author">
-                    @user.getFirstName @user.getLastName
-                </span>
-                <span class="message-date">
-                @UiUtils.messageDateFormat(message.getDate)
-                </span>
-            </div>
-            <div class="message-body">@message.getBody</div>
-            @if(message.getAttachments != null) {
-                <div class="message-attachments">
-                @for(attachment <- message.getAttachments) {
-                    @if(attachment.getType == MessageAttachmentType.PHOTO) {
-                        @defining(attachment.getPhoto) { photo: Photo =>
-                            <img src="@photo.getPhoto604" alt="@photo.getText">
-                        }
-                    }
-                    @if(attachment.getType == MessageAttachmentType.LINK) {
-                        @defining(attachment.getLink) { link: Link =>
-                            <a href="@link.getUrl">@link.getTitle</a>
-                        }
-                    }
-                }
+    @for(message <- messages) {
+        @defining(users(message.getUserId)) { user: User =>
+            <div class="message">
+                <img src="@user.getPhoto50" alt="@user.getFirstName @user.getLastName" class="user-photo">
+                <div class="message-header">
+                    <span class="message-author">
+                        @user.getFirstName @user.getLastName
+                    </span>
+                    <span class="message-date">
+                    @UiUtils.messageDateFormat(message.getDate)
+                    </span>
                 </div>
-            }
-        </div>
+                <div class="message-body">@message.getBody</div>
+                @if(message.getAttachments != null) {
+                    <div class="message-attachments">
+                    @for(attachment <- message.getAttachments) {
+                        @if(attachment.getType == MessageAttachmentType.PHOTO) {
+                            @defining(attachment.getPhoto) { photo: Photo =>
+                                <img src="@photo.getPhoto604" alt="@photo.getText">
+                            }
+                        }
+                        @if(attachment.getType == MessageAttachmentType.LINK) {
+                            @defining(attachment.getLink) { link: Link =>
+                                <a href="@link.getUrl">@link.getTitle</a>
+                            }
+                        }
+                    }
+                    </div>
+                }
+                @if(message.getFwdMessages != null) {
+                    <div class="message-attachments">
+                    @provider(message.getFwdMessages.asScala.toList)
+                    </div>
+                }
+            </div>
+        }
     }
-}
 </div>
