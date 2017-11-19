@@ -17,7 +17,8 @@ libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0
 lazy val root = (project in file(".")).enablePlugins(SbtTwirl)
 
 assemblyMergeStrategy in assembly := {
-  case PathList("META-INF", xs@_*) => MergeStrategy.discard
+  case PathList("META-INF", "MANIFEST.MF") => MergeStrategy.discard
+  case PathList("META-INF", xs@_*) => MergeStrategy.filterDistinctLines
   case x =>
     val oldStrategy = (assemblyMergeStrategy in assembly).value
     oldStrategy(x)
