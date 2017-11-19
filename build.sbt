@@ -15,3 +15,10 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
 libraryDependencies += "org.scalamock" %% "scalamock-scalatest-support" % "3.6.0" % Test
 
 lazy val root = (project in file(".")).enablePlugins(SbtTwirl)
+
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs@_*) => MergeStrategy.discard
+  case x =>
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+}
