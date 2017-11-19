@@ -8,7 +8,6 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.{Failure, Success}
-import scala.concurrent.ExecutionContext.Implicits.global
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -20,9 +19,7 @@ object Main {
           new VkModule(config.vkConfig)
         )
         val processor = injector.instance[MessagesProcessor]
-        val process = processor.process()
-        process.failed.foreach(e => println(e.getMessage))
-        Await.ready(process, 5 minutes)
+        Await.result(processor.process(), 5 minutes)
       case Failure(e) => println(e.getMessage)
     }
   }
