@@ -7,7 +7,11 @@ import com.atanana.vk_digest.vk.UsersProvider
 import com.vk.api.sdk.objects.messages.Message
 import play.twirl.api.Html
 
-class UiComposer @Inject()(private val config: MailConfig, private val usersProvider: UsersProvider) {
+class UiComposer @Inject()(
+                            private val config: MailConfig,
+                            private val usersProvider: UsersProvider,
+                            private val twirlWrapper: TwirlWrapper
+                          ) {
 
   def composeMail(messages: List[Message]): MailData = MailData(
     messagesHtml(messages),
@@ -15,14 +19,14 @@ class UiComposer @Inject()(private val config: MailConfig, private val usersProv
   )
 
   private def messagesHtml(messages: List[Message]): Html = {
-    val messagesHtml = html.messages(messages, users(messages), this.messages)
-    html.main(subject, messagesHtml)
+    val messagesHtml = twirlWrapper.messages(messages, users(messages), this.messages)
+    twirlWrapper.main(subject, messagesHtml)
   }
 
   private def subject: String = s"${config.subjectPrefix} ${UiUtils.subjectDate}"
 
   private def messages(messages: List[Message]): Html = {
-    html.messages(messages, users(messages), this.messages)
+    twirlWrapper.messages(messages, users(messages), this.messages)
   }
 
   private def users(messages: List[Message]) = {
