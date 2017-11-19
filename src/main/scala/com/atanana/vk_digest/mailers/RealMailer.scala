@@ -16,15 +16,11 @@ class RealMailer @Inject()(private val config: MailConfig) extends Mailer {
       .as(config.address, config.password)
       .startTtls(true)()
 
-    val future: Future[Unit] = mailer(
+    mailer(
       Envelope.from(config.address.addr)
         .to(config.addressTo.addr)
         .subject(mailData.subject)
         .content(Multipart().html(mailData.html.toString()))
     )
-    future.failed.foreach(
-      e => println(e.getMessage)
-    )
-    future
   }
 }

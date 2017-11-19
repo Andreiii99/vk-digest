@@ -19,7 +19,9 @@ object Main {
           new VkModule(config.vkConfig)
         )
         val processor = injector.instance[MessagesProcessor]
-        Await.result(processor.process(), 1 minute)
+        val process = processor.process()
+        process.failed.foreach(e => println(e.getMessage))
+        Await.ready(process, 5 minutes)
       case Failure(e) => println(e.getMessage)
     }
   }
