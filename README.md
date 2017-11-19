@@ -1,4 +1,7 @@
 # vk-digest
+
+[![Build Status](https://travis-ci.org/atanana/vk-digest.svg?branch=master)](https://travis-ci.org/atanana/vk-digest)
+
 Отсылает по почте сообщения с vk.com
 
 Настройки в config.json:
