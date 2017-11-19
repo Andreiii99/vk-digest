@@ -14,7 +14,10 @@
         "port": 456, // порт почтового сервера
         "address": "test@test.com", // отправитель
         "password": "test password", // пароль отправителя
-        "addressTo": "test_to@test.com", // адрес получателя
+        "addressTo": [ // адреса получателей
+              "test_to@test.com",
+              "test_to2@test.com"
+            ],
         "subjectPrefix": "Дайджест" // префикс письма
       }
     }

@@ -19,7 +19,7 @@ class RealMailer @Inject()(private val config: MailConfig) extends Mailer {
 
     mailer(
       Envelope.from(config.address.addr)
-        .to(config.addressTo.addr)
+        .bcc(config.addressTo.map(_.addr): _*)
         .subject(mailData.subject)
         .content(Multipart().add(new MimeBodyPart {
           setContent(mailData.html.toString(), "text/html; charset=UTF-8")

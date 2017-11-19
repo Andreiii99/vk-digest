@@ -34,7 +34,7 @@ case class MailConfig(
                        port: Int,
                        address: String,
                        password: String,
-                       addressTo: String,
+                       addressTo: List[String],
                        subjectPrefix: String
                      )
 

@@ -9,7 +9,10 @@
     "port": 456,
     "address": "test@test.com",
     "password": "test password",
-    "addressTo": "test_to@test.com",
+    "addressTo": [
+      "test_to@test.com",
+      "test_to2@test.com"
+    ],
     "subjectPrefix": "Дайджест"
   }
 }

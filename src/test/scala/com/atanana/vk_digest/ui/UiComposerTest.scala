@@ -72,5 +72,5 @@ class UiComposerTest extends WordSpecLike with BeforeAndAfter with MockFactory w
   private def createComposer(subjectPrefix: String = "") =
     new UiComposer(config(subjectPrefix), usersProvider, twirlWrapper)
 
-  private def config(subjectPrefix: String = "") = MailConfig("", 0, "", "", "", subjectPrefix)
+  private def config(subjectPrefix: String = "") = MailConfig("", 0, "", "", List.empty, subjectPrefix)
 }
