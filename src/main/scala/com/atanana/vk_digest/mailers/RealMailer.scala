@@ -1,6 +1,7 @@
 package com.atanana.vk_digest.mailers
 
 import javax.inject.Inject
+import javax.mail.internet.MimeBodyPart
 
 import com.atanana.vk_digest.MailConfig
 import com.atanana.vk_digest.ui.MailData
@@ -20,7 +21,9 @@ class RealMailer @Inject()(private val config: MailConfig) extends Mailer {
       Envelope.from(config.address.addr)
         .to(config.addressTo.addr)
         .subject(mailData.subject)
-        .content(Multipart().html(mailData.html.toString()))
+        .content(Multipart().add(new MimeBodyPart {
+          setContent(mailData.html.toString(), "text/html; charset=UTF-8")
+        }))
     )
   }
 }
