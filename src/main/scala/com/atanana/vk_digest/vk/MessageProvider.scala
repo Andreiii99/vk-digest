@@ -14,6 +14,8 @@ class MessageProvider @Inject()(
                                  private val vkApiClient: VkApiClient,
                                  private val config: VkConfig
                                ) {
+  private val messagesCount = 200
+
   def messages(lastMessageId: Option[Int]): List[Message] = {
     vkApiClient.messages()
       .getHistory(actor)
@@ -21,14 +23,14 @@ class MessageProvider @Inject()(
       .userId(config.userId)
       .startMessageId(startMessageId(lastMessageId))
       .offset(offset(lastMessageId))
-      .count(50)
+      .count(messagesCount)
       .execute()
       .getItems
       .asScala.toList
   }
 
   private def offset(lastMessageId: Option[Int]): Int = {
-    lastMessageId.map(_ => -50).getOrElse(0)
+    lastMessageId.map(_ => -messagesCount).getOrElse(0)
   }
 
   private def startMessageId(lastMessageId: Option[Int]): Int = {
