@@ -15,7 +15,7 @@ class RealMailer @Inject()(private val config: MailConfig) extends Mailer {
     val mailer = Mailer(config.server, config.port)
       .auth(true)
       .as(config.address, config.password)
-      .startTtls(true)()
+      .startTls(true)()
 
     mailer(
       Envelope.from(config.address.addr)
