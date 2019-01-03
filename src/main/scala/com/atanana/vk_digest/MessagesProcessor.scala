@@ -21,6 +21,7 @@ class MessagesProcessor @Inject()(
     val messages = messageProvider.messages(lastMessage)
 
     if (messages.nonEmpty) {
+      Thread.sleep(1000) // wait to guarantee not exceed vk api rps limit
       sendMail(messages).map(_ => {
         storeLastMessageId(lastMessage, lastMessageId(messages))
         Future.successful()
